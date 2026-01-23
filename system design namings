@@ -1,0 +1,20 @@
+Automatic Conflict Resolution
+Conflict-free replicated datatypes
+Mergeable persistent data structures
+Operational transformation
+
+replication
+leader - follower
+multi leader
+leaderless
+
+leaderless
+Read repair and anti-entropy
+
+Read repair
+Anti-entropy process
+sloppy quorum
+Multi-datacenter operation
+Last write wins (discarding concurrent writes)
+Merging concurrently written values
+
