@@ -1,0 +1,77 @@
+https://leetcode.com/problems/maximum-subarray/
+class Solution {
+    public int maxSubArray(int[] nums) {
+        int sum = nums[0];
+        int currentSum = nums[0];
+        for(int i = 1; i < nums.length; i++) {
+            currentSum = Math.max(nums[i], currentSum + nums[i]);
+            sum = Math.max(currentSum, sum);
+        }
+        return sum;
+    }
+}
+
+
+https://leetcode.com/problems/subarray-sum-equals-k/
+
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        int countOfSubArray = 0;
+        int sum = 0;
+        Map<Integer, Integer> numsMap = new HashMap<Integer, Integer>();
+        for(int i = 0 ; i < nums.length; i++) {
+            sum += nums[i];
+            if(sum == k) {
+                countOfSubArray++;
+            }
+            //it has to be sum - k only then numbers between it will be sum to k
+            if(numsMap.containsKey(sum - k)) {
+                countOfSubArray += numsMap.get(sum - k);
+            }
+            numsMap.put(sum, numsMap.getOrDefault(sum, 0) + 1);
+        }
+        return countOfSubArray;
+    }
+}
+
+https://leetcode.com/problems/subarray-sums-divisible-by-k/
+    class Solution {
+        public int subarraysDivByK(int[] nums, int k) {
+            int totalCount = 0;
+            int sum = 0;
+            Map<Integer, Integer> numsMap = new HashMap<Integer, Integer>();
+            for(int i = 0 ;i < nums.length; i++) {
+                sum = ((sum + nums[i]) % k + k) % k;
+                if(sum == 0) {
+                    totalCount++;
+                }
+				//this means if already sum exists
+                if(numsMap.containsKey(sum)) {
+                    totalCount = totalCount + numsMap.get(sum);
+                }
+                numsMap.put(sum, numsMap.getOrDefault(sum, 0) + 1);
+                
+                
+            }
+            return totalCount;
+        }
+    }
+	
+https://leetcode.com/problems/product-of-array-except-self/
+	
+	class Solution {
+    public int[] productExceptSelf(int[] nums) {
+        int preProd = 1;
+        int postProd = 1;
+        int output[] = new int[nums.length];
+        for(int i = 0; i < nums.length; i++) {
+            output[i] = preProd;
+            preProd *= nums[i];
+        }
+        for(int i = nums.length - 1; i >= 0; i--) {
+            output[i] = output[i] * postProd;
+            postProd *= nums[i];
+        }
+        return output;
+    }
+}
