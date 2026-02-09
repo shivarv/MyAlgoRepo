@@ -75,3 +75,107 @@ https://leetcode.com/problems/product-of-array-except-self/
         return output;
     }
 }
+
+
+https://leetcode.com/problems/merge-intervals/
+static ArrayList<int[]> mergeOverlap(int[][] arr) {
+
+        // Sort intervals based on start values
+        Arrays.sort(arr, (a, b) -> Integer.compare(a[0], b[0]));
+
+        ArrayList<int[]> res = new ArrayList<>();
+        res.add(new int[]{arr[0][0], arr[0][1]});
+
+        for (int i = 1; i < arr.length; i++) {
+            int[] last = res.get(res.size() - 1);
+            int[] curr = arr[i];
+
+            // If current interval overlaps with the last merged interval,
+            // merge them
+            if (curr[0] <= last[1])
+                last[1] = Math.max(last[1], curr[1]);
+            else
+                res.add(new int[]{curr[0], curr[1]});
+        }
+
+        return res;
+    }
+	
+	https://leetcode.com/problems/insert-interval/
+
+	
+	
+	https://leetcode.com/problems/trapping-rain-water/
+
+	// key point on why this works.. because Min(lmax or rMax) only be considered for the amount cal
+	// left <= right
+	// lMax <= rMax
+	//for lMax greater ,calculate using left, rMax greater calculate using right
+	class Solution {
+    public int trap(int[] height) {
+        int waterCount = 0;
+        int lMax = height[0];
+        int rMax = height[height.length - 1];
+        int left = 1;
+        int right = height.length - 1;
+        while(left <= right) {
+            if (lMax <= rMax) {
+                if (height[left] < lMax) {
+                    waterCount += lMax - height[left];
+                }
+                lMax = Math.max(lMax, height[left]);
+                left++;
+            } else {
+                if (height[right] < rMax) {
+                    waterCount += rMax - height[right];
+                }
+                rMax = Math.max(rMax, height[right]);
+                right--;
+            }
+        }
+        return waterCount;
+    }
+}
+
+https://leetcode.com/problems/next-permutation/
+
+class Solution {
+    private void reverse(int[] nums, int left , int right) {
+        
+        while(left < right) {
+            int temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+            left++;
+            right--;
+        }
+    }
+
+    public void nextPermutation(int[] nums) {
+        int firstNonIncrementingIndex = -1;
+        //
+        for(int i = nums.length - 2; i >= 0; i--) {
+            if(nums[i] < nums[i + 1]) {
+                firstNonIncrementingIndex = i;
+                break;
+            }
+        }
+
+        System.out.println(firstNonIncrementingIndex);
+        if(firstNonIncrementingIndex == -1) {
+            reverse(nums, 0 , nums.length - 1);
+            return;
+        }
+        for(int i = nums.length - 1;i > firstNonIncrementingIndex; i--) {
+            if(nums[i] > nums[firstNonIncrementingIndex]) {
+                int temp = nums[i];
+                nums[i] = nums[firstNonIncrementingIndex];
+                nums[firstNonIncrementingIndex] = temp;
+                break;
+            }
+        }
+                System.out.println(Arrays.toString(nums));
+                            reverse(nums, firstNonIncrementingIndex + 1, nums.length - 1);
+        System.out.println(Arrays.toString(nums));
+    }
+}
