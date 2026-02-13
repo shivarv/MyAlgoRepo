@@ -12,14 +12,14 @@ class Solution {
 
     public void nextPermutation(int[] nums) {
         int firstNonIncrementingIndex = -1;
-        //
+        // the logic is find the first item that has not arranged in increasing order
         for(int i = nums.length - 2; i >= 0; i--) {
             if(nums[i] < nums[i + 1]) {
                 firstNonIncrementingIndex = i;
                 break;
             }
         }
-
+		//if nothing is found, reverse the array for edge case
         System.out.println(firstNonIncrementingIndex);
         if(firstNonIncrementingIndex == -1) {
             reverse(nums, 0 , nums.length - 1);

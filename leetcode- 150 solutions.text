@@ -179,3 +179,149 @@ class Solution {
         System.out.println(Arrays.toString(nums));
     }
 }
+
+https://leetcode.com/problems/rotate-array/
+
+class Solution {
+    public void rotate(int[] nums, int k) {
+        if(nums.length <= 1) {
+            return;
+        }
+        k = k % nums.length;
+        reverseArray(nums, 0, nums.length - 1);
+        reverseArray(nums, 0, k -1);
+        reverseArray(nums, k, nums.length - 1);
+        
+    }
+
+    private void reverseArray(int[] nums, int start, int end) {
+        while(start < end) {
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
+        }
+    }
+}
+
+
+https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        int buy = 0;
+        int sell = 1;
+        int profit = 0;
+        for(int i = 1; i < prices.length; i++ ) {
+            profit = Math.max(profit, prices[sell] - prices[buy]);
+            if(prices[sell] < prices[buy]) {
+                buy = sell;
+            }
+            sell++;
+        }
+        return profit;
+    }
+}
+//my approach
+public int maxProfit(int[] prices) {
+        int buy = prices[0];
+        int profit = 0;
+        for(int i = 1; i < prices.length; i++) {
+            profit = Math.max(profit, prices[i] - buy);
+            buy = Math.min(buy, prices[i]);
+        }
+        return profit;
+}
+
+
+
+
+https://leetcode.com/problems/majority-element/
+
+// if we are asked for no spacecomplexity
+//sort the array
+//return the n/ 2 element..for 1 , 2 , 2, 4...if sorted n/ 2 = arr[2] = 2, if its 1, 2 , 2 .. n/ 2 = 1..arr[1] = 2
+class Solution {
+    public int majorityElement(int[] nums) {
+        Map<Integer, Integer> countMap = new HashMap<Integer, Integer>();
+        int countValue = 0 ;
+        // for 4 , half value is more than 2..for 3 ,half value is more than 1
+        int halfValue = nums.length  % 2 == 0 ? nums.length / 2 : (nums.length - 1) / 2;
+        for(int i = 0; i < nums.length; i++) {
+            countValue = countMap.getOrDefault(nums[i], 0) + 1;
+            if(countValue > halfValue) {
+                return nums[i];
+            }
+            countMap.put(nums[i], countValue);
+        }
+        return -1;
+    }
+}
+
+https://leetcode.com/problems/find-the-duplicate-number/
+
+class Solution {
+    public int findDuplicate(int[] nums) {
+        //flyod's cycle
+        int slowPointer = 0;
+        int fastPointer = 0;
+        int anotherSlowPointer = 0;
+        // this logic gives the intersection of fastPointer and slowPointer
+        while(true) {
+            slowPointer = nums[slowPointer];
+            fastPointer = nums[nums[fastPointer]];
+            if(slowPointer == fastPointer) {
+                break;
+            }
+        }
+        //this gives us to identify the start of loop
+        //the start of loop is the number 
+        while(anotherSlowPointer != fastPointer) {
+            anotherSlowPointer = nums[anotherSlowPointer];
+            fastPointer = nums[fastPointer];
+        }
+        return anotherSlowPointer;
+
+    }
+}
+
+class Solution {
+    public int findDuplicate(int[] nums) {
+        HashMap<Integer, Boolean> numsMap = new HashMap<Integer, Boolean>();
+        for(int i = 0; i < nums.length;i++) {
+            if(numsMap.containsKey(nums[i])) {
+                return nums[i];
+            }
+            numsMap.put(nums[i], true);
+        }
+        return -1;
+    }
+}
+
+
+https://leetcode.com/problems/set-matrix-zeroes/
+class Solution {
+    public void setZeroes(int[][] matrix) {
+        Set<Integer> xSet = new TreeSet<Integer>();
+        Set<Integer> ySet = new TreeSet<Integer>();
+        for(int i = 0 ; i < matrix.length;i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                if(matrix[i][j] == 0) {
+                    xSet.add(i);
+                    ySet.add(j);
+                }
+            }
+        }
+        for(Integer yValue: ySet) {
+            for(int i = 0; i < matrix.length; i++) {
+                matrix[i][yValue] = 0;
+            }
+        }
+        for(Integer xValue: xSet) {
+            for(int j = 0; j < matrix[0].length; j++) {
+                matrix[xValue][j] = 0;
+            }
+        }
+    }
+}
