@@ -301,6 +301,9 @@ class Solution {
 
 
 https://leetcode.com/problems/set-matrix-zeroes/
+
+//optimal solution is more better .
+
 class Solution {
     public void setZeroes(int[][] matrix) {
         Set<Integer> xSet = new TreeSet<Integer>();
@@ -323,5 +326,157 @@ class Solution {
                 matrix[xValue][j] = 0;
             }
         }
+    }
+}
+
+https://leetcode.com/problems/longest-mountain-in-array/
+
+public int longestMountain(int[] arr) {
+	int max = 0;
+	int peak = 0;
+	int leftValley = 0;
+	int rightValley = 0;
+	//starts with 1 and ends before arr.length - 1
+	for(int i = 1; i < arr.length - 1; ) {
+		if(arr[i-1] < arr[i] && arr[i] > arr[i + 1]) {
+			peak = i;
+			leftValley = i;
+			rightValley = i;
+			while(leftValley >= 1 && arr[leftValley] > arr[leftValley - 1]) {
+				leftValley--;
+			}
+			while(rightValley < arr.length - 1 && arr[rightValley] > arr[rightValley + 1]) {
+				rightValley++;
+			}
+			max = Math.max(rightValley - leftValley + 1, max);
+			i = rightValley + 1;
+		} else {
+			i++;
+		}
+	   
+	}
+	return max;
+}
+	
+https://leetcode.com/problems/two-sum/
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        HashMap<Integer, Integer> setMap = new HashMap<Integer, Integer>();
+        for(int i = 0; i < nums.length;i++) {
+            if(setMap.containsKey(target - nums[i])) {
+                return new int[]{i, setMap.get(target - nums[i]) };
+            } else {
+                setMap.put(nums[i], i);
+            }
+        }
+        return new int[]{-1, -1};
+    }
+}
+
+https://leetcode.com/problems/group-anagrams/
+//one other algorithm is sorting each item and then seeing everyitem which is same
+class Solution {
+    public static String createHash(String str) {
+        int[] charSet = new int[26];
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < str.length(); i++) {
+            charSet[str.charAt(i) - 'a']++;
+        }
+        for(int i = 0; i < 26; i++) {
+            if(charSet[i] > 0) {
+                sb.append((char) ('a' + i));
+                sb.append(charSet[i]);
+                sb.append('$');
+            }
+        }
+        return sb.toString();
+    }
+
+    public List<List<String>> groupAnagrams(String[] strs) {
+       List<List<String>> output = new ArrayList<>();
+       HashMap<String, List<String>> hashMapData = new HashMap<String, List<String>>();
+       for(int i = 0; i < strs.length; i++) {
+            String hashString = createHash(strs[i]);
+            List<String> loopOutput = hashMapData.getOrDefault(hashString, new ArrayList<String>());
+            loopOutput.add(strs[i]);
+            hashMapData.put(hashString, loopOutput);
+       }
+        for (Map.Entry<String, List<String>> entry : hashMapData.entrySet())    {
+            String key = entry.getKey();
+            output.add(entry.getValue());
+        }
+        return output;
+    }
+}
+
+https://leetcode.com/problems/longest-consecutive-sequence/
+
+class Solution {
+    public int longestConsecutive(int[] nums) {
+        int maxSequence = 0;
+        int sequence = 1;
+        HashSet<Integer> numsSet = new HashSet<Integer>();
+        for(int num: nums) {
+            numsSet.add(num);
+        }
+        //avoid for loop of nums because it can have duplicates
+        //always loop through set to avoid redoing duplicate nums
+        for(int num: numsSet) {
+			// num - 1 check is needed because only then it makes our code is checking begining of a sequence
+			// if 3 exists already and our loop is at 4, we should avoid going to check for sequence at 4
+            if(!numsSet.contains(num - 1)) {
+                sequence = 1;
+                while(numsSet.contains(num + sequence)) {
+                    sequence++;   
+                }
+                // we allow even 1 item
+                maxSequence = Math.max(maxSequence, sequence);
+            }   
+        }
+        return maxSequence;
+    }
+}
+
+
+https://leetcode.com/problems/top-k-frequent-elements/
+
+class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+
+        Map<Integer, Integer> countMap = new HashMap<>();
+
+        // 1️⃣ Count frequency
+        for (int num : nums) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+
+        // 2️⃣ Create buckets (max frequency <= nums.length)
+        List<List<Integer>> buckets = new ArrayList<>();
+
+		// <= nums.length is important step , else buckets.get(freq) can throw exception
+		// eg for [1] as inputs
+        for (int i = 0; i <= nums.length; i++) {
+            buckets.add(new ArrayList<>());
+        }
+
+        // 3️⃣ Fill buckets
+        for (Map.Entry<Integer, Integer> entry : countMap.entrySet()) {
+            int num = entry.getKey();
+            int freq = entry.getValue();
+            buckets.get(freq).add(num);
+        }
+
+        // 4️⃣ Collect top k from highest frequency
+        int[] result = new int[k];
+        int index = 0;
+
+        for (int i = buckets.size() - 1; i >= 0 && index < k; i--) {
+            for (int num : buckets.get(i)) {
+                result[index++] = num;
+                if (index == k) break;
+            }
+        }
+
+        return result;
     }
 }
