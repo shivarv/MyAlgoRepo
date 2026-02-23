@@ -637,3 +637,226 @@ class Solution {
         return true;
     }
 }
+
+https://leetcode.com/problems/intersection-of-two-arrays/
+
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        Set<Integer> itemsSet = new HashSet<Integer>();
+        int pointer1 = 0, pointer2 = 0, l1  = nums1.length , l2 = nums2.length;
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        while(pointer1 < l1 && pointer2 < l2) {
+            if(nums1[pointer1] < nums2[pointer2]) {
+                pointer1++;
+            } else if(nums2[pointer2] < nums1[pointer1]) {
+                pointer2++;
+            } else {
+                itemsSet.add(nums1[pointer1]);
+                pointer1++;
+                pointer2++;
+            }
+        }
+        return itemsSet.stream()
+                    .mapToInt(Integer::intValue)
+                    .toArray();
+    }
+}
+
+
+https://leetcode.com/problems/ransom-note/
+
+class Solution {
+    public boolean canConstruct(String ransomNote, String magazine) {
+        Map<Character, Integer> ransomNoteMap = new HashMap<Character, Integer>();
+        Map<Character, Integer> magazineMap = new HashMap<Character, Integer>();
+        for(int i = 0; i < ransomNote.length(); i++) {
+            ransomNoteMap.put(ransomNote.charAt(i),
+            ransomNoteMap.getOrDefault(ransomNote.charAt(i), 0) + 1
+            );
+        }
+        for(int i = 0; i < magazine.length(); i++) {
+            magazineMap.put(magazine.charAt(i),
+            magazineMap.getOrDefault(magazine.charAt(i), 0) + 1
+            );
+        }
+        for (Map.Entry<Character, Integer> entry : ransomNoteMap.entrySet())     {
+            Character key = entry.getKey();
+            if(!magazineMap.containsKey(key) || ( magazineMap.get(key) - ransomNoteMap.get(key) < 0)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+https://leetcode.com/problems/design-hashmap/
+
+class MyHashMap {
+    int arr[];
+    public MyHashMap() {
+        arr = new int[1000];
+        Arrays.fill(arr, -1);
+    }
+    
+    public void put(int key, int value) {
+        if (key >= arr.length) {
+            resize(key + 1);   // expand just enough
+        }
+        arr[key] = value;
+    }
+    
+    public int get(int key) {
+        if(key >= arr.length || arr[key] == -1) {
+            return -1;
+        }
+        return arr[key];
+    }
+    
+    public void remove(int key) {
+        if(key < arr.length) {
+            arr[key] = -1;
+        }
+    }
+
+    private void resize(int newSize) {
+        int[] newArr = new int[newSize];
+        Arrays.fill(newArr, -1);   // VERY IMPORTANT
+
+        for (int i = 0; i < arr.length; i++) {
+            newArr[i] = arr[i];
+        }
+
+        arr = newArr;
+    }
+}
+
+/**
+ * Your MyHashMap object will be instantiated and called as such:
+ * MyHashMap obj = new MyHashMap();
+ * obj.put(key,value);
+ * int param_2 = obj.get(key);
+ * obj.remove(key);
+ */
+ 
+ 
+ https://leetcode.com/problems/find-all-anagrams-in-a-string/
+
+ class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> output = new ArrayList<Integer>();
+        int sCharMap[] = new int[26];
+        int pCharMap[] = new int[26];
+        int start = 0;
+        for(int i = 0; i < p.length(); i++) {
+            pCharMap[p.charAt(i) - 'a']++;
+        }
+        for(int i = 0; i < s.length(); i++) {
+            sCharMap[s.charAt(i) -'a']++;
+            if(i - start + 1 == p.length()) {
+                if(compareForSame(sCharMap, pCharMap, p)) {
+                    output.add(start);
+                }
+                sCharMap[s.charAt(start) - 'a']--;
+                start++;
+            }
+        }
+        return output;
+    }
+
+    public boolean compareForSame(int sCharMap[], int pCharMap[], String p) {
+        for(int i = 0; i < p.length(); i++) {
+            if(sCharMap[p.charAt(i) - 'a'] != pCharMap[p.charAt(i) - 'a']
+             ) {
+                return false;
+            }
+        }
+        return true;     
+    }
+}
+
+
+https://leetcode.com/problems/logger-rate-limiter/
+
+
+
+https://leetcode.com/problems/minimum-window-substring/
+
+//slightly tricky
+//the idea is sliding window
+//loop through the string
+//if the char is already present
+// increment start..remove the start char from the hashmap
+// else 
+//	calculate max = Math.max(max, i - start + 1);
+//	increment the array loop
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        Map<Character, Integer > charPlacement = new HashMap<Character, Integer>();
+        int max = 0;
+        int start = 0;
+        if(s.length() == 1) {
+            return 1;
+        }
+        for(int i = 0; i < s.length(); ) {
+            if(charPlacement.containsKey(s.charAt(i))) {
+                charPlacement.remove(s.charAt(start));
+                start++;
+            } else {
+                max = Math.max(max, i - start + 1 );
+                charPlacement.put(s.charAt(i), i);
+                i++;
+            }
+        }
+        return max;
+    }
+}
+
+https://leetcode.com/problems/permutation-in-string/
+
+class Solution {
+    //key points :
+    // we need to see if s1 (combination) is present in s2
+    // setup charItem array 
+    // load s1 count to the charItem
+    // assignRequired as count of s1
+    // setup start = end = 0 ( sliding window)
+    // loop through s2 string
+    // reduce the charItem count of the character
+    //key is if(charItem[s2.charAt(end) -'a'] > 0) { required--;}
+    // if (end - start + 1 > s1.length)
+    // ideally we are removing the start variable from charItem only if its >= 0
+    //if(charItem[s2.charAt(start) -'a'] >= 0) , increment start , required 
+    //   if required == 0,  return true
+    public boolean checkInclusion(String s1, String s2) {
+        int[] charItem = new int[26];
+        int required = 0;
+        int start = 0 , end = 0;
+        if(s1.length() > s2.length()) {
+            return false;
+        }
+        for(int i = 0; i < s1.length(); i++) {
+            charItem[s1.charAt(i) - 'a']++;
+        }
+        required = s1.length();
+        while(end < s2.length()) {
+            if(charItem[s2.charAt(end) -'a'] > 0) {
+                required--;
+            }
+            charItem[s2.charAt(end) -'a']--;
+            if(end - start + 1 > s1.length()) {
+                if(charItem[s2.charAt(start) -'a'] >= 0) {
+                    required++;
+                }
+                charItem[s2.charAt(start) -'a']++;
+                start++;
+            }
+            if(required == 0) {
+                return true;
+            }
+            end++;
+        }
+        return false;
+    }
+}
