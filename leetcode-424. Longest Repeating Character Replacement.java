@@ -29,3 +29,34 @@ class Solution {
         return max;
     }
 }
+
+// the below one is the anser for the leetcode-424..not sure what is the actual problem for the above
+/*
+
+class Solution {
+    public int characterReplacement(String s, int k) {
+        int[] totalCharsCount = new int[26];
+        int longestCharCount = 0;
+        for(int i = 0; i < s.length(); i++) {
+            totalCharsCount[s.charAt(i) - 'A']++;
+        }
+        Arrays.sort(totalCharsCount);
+        reverse(totalCharsCount);
+        for(int i = 0; i < k; i++) {
+            longestCharCount += totalCharsCount[i];
+        }
+        return longestCharCount;
+
+    }
+
+    
+    static void reverse(int[] arr) {
+        for (int i = 0; i < arr.length / 2; i++) {
+            int temp = arr[i];
+            arr[i] = arr[arr.length - 1 - i];
+            arr[arr.length - 1 - i] = temp;
+        }
+    }
+
+}
+*/

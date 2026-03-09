@@ -901,6 +901,8 @@ class Solution {
 https://leetcode.com/problems/sliding-window-maximum/
 
 
+
+
 https://leetcode.com/problems/maximum-average-subarray-i/
 
 
@@ -924,6 +926,7 @@ class Solution {
 }
 
 https://leetcode.com/problems/minimum-window-substring/
+
 class Solution {
         
     private int indexOf(char ch) {
@@ -1055,3 +1058,149 @@ class Solution {
         return max;
     }
 }
+
+
+https://leetcode.com/problems/sliding-window-maximum/
+
+
+https://leetcode.com/problems/maximum-average-subarray-i/
+
+
+
+class Solution {
+    public double findMaxAverage(int[] nums, int k) {
+        int max = Integer.MIN_VALUE;
+        int currentMax = 0;
+        for(int i = 0 ; i < k; i++) {
+            currentMax += nums[i];
+        }
+        max = Math.max(max, currentMax);
+        for(int i = k; i < nums.length; i++) {
+            currentMax -= (nums[i - k]);
+            currentMax += nums[i];
+            max = Math.max(max, currentMax);
+        }
+       // System.out.println(max);
+       // this happens, if u wrote (double) (max/ k), then it would create loss in convertion
+        return (double) max /k; 
+    }
+}
+
+
+https://leetcode.com/problems/fruit-into-baskets/
+class Solution {
+     public int totalFruit(int[] fruits) {
+        Map<Integer, Integer> fruitsTypeCountMap  = new HashMap<Integer, Integer>();
+        int left = 0, right = 0;
+        int max = Integer.MIN_VALUE;
+        while(right < fruits.length) {
+            fruitsTypeCountMap.put(fruits[right], 
+                fruitsTypeCountMap.getOrDefault(fruits[right], 0) + 1);
+            right++;
+            while(fruitsTypeCountMap.size() > 2) {
+                fruitsTypeCountMap.put(fruits[left], fruitsTypeCountMap.get(fruits[left]) - 1);
+                if(fruitsTypeCountMap.get(fruits[left]) == 0) {
+                    fruitsTypeCountMap.remove(fruits[left]);
+                }
+                left++;
+            }
+            max = Math.max(max, right - left);
+        }
+        return max;
+    }
+
+}
+
+https://leetcode.com/problems/minimum-size-subarray-sum/
+
+
+class Solution {
+    public int minSubArrayLen(int target, int[] nums) {
+        int left = 0;
+        int right = 0;
+        int minCount = Integer.MAX_VALUE;
+        int currentTarget = 0;
+        while(right < nums.length) {
+            currentTarget += nums[right];
+            while(currentTarget >= target) {
+                // +1 is needed, right isnt incremented here
+                minCount = Math.min(minCount, right - left + 1);
+                currentTarget -= nums[left];
+                left++;
+            }
+            right++;
+        }
+
+        return (minCount == Integer.MAX_VALUE)? 0 : minCount;
+    }
+}
+//my inital code
+class Solution {
+    public int minSubArrayLen(int target, int[] nums) {
+        int left = 0;
+        int right = 0;
+        int minCount = Integer.MAX_VALUE;
+        int currentTarget = 0;
+        while(right < nums.length) {
+            if(right < nums.length && currentTarget < target) {
+                currentTarget += nums[right];
+                right++;
+            }
+            
+            if(currentTarget >= target) {
+                minCount = Math.min(minCount, right - left);
+                currentTarget -= nums[left];
+                left++;
+            }
+        }
+        while(currentTarget >= target && left < right) {
+            currentTarget -= nums[left];
+            minCount = Math.min(minCount, right - left);
+            left++;
+        }
+        if(minCount == Integer.MAX_VALUE) {
+            return 0;
+        }
+        return minCount;
+    }
+}
+
+
+
+https://leetcode.com/problems/find-all-anagrams-in-a-string/
+
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> output = new ArrayList<Integer>();
+        int sCharMap[] = new int[26];
+        int pCharMap[] = new int[26];
+        int start = 0;
+        for(int i = 0; i < p.length(); i++) {
+            pCharMap[p.charAt(i) - 'a']++;
+        }
+        for(int i = 0; i < s.length(); i++) {
+            sCharMap[s.charAt(i) -'a']++;
+            if(i - start + 1 == p.length()) {
+                if(compareForSame(sCharMap, pCharMap, p)) {
+                    output.add(start);
+                }
+                sCharMap[s.charAt(start) - 'a']--;
+                start++;
+            }
+        }
+        return output;
+    }
+
+    public boolean compareForSame(int sCharMap[], int pCharMap[], String p) {
+        for(int i = 0; i < p.length(); i++) {
+            if(sCharMap[p.charAt(i) - 'a'] != pCharMap[p.charAt(i) - 'a']
+             ) {
+                return false;
+            }
+        }
+        return true;     
+    }
+}
+
+https://leetcode.com/problems/sliding-window-maximum/
+- didnt complete yet..mentioned earlier
