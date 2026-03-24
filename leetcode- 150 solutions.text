@@ -1996,3 +1996,183 @@ class MyQueue {
  * int param_3 = obj.peek();
  * boolean param_4 = obj.empty();
  */
+ 
+ https://leetcode.com/problems/decode-string/
+
+ class Solution {
+    public String decodeString(String s) {
+        Stack<String> charStack = new Stack<String>();
+        Stack<Integer> numStack = new Stack<Integer>();
+        int k = 0;
+        String current = "";
+        for(int i = 0; i < s.length(); i++) {
+            if(Character.isDigit(s.charAt(i))) {
+                k = k * 10 + (s.charAt(i) - '0');
+            } else if(s.charAt(i) == '[') {
+                charStack.push(current);
+                numStack.push(k);
+                current = "";
+                k = 0;
+            } else if(s.charAt(i) == ']') {
+                int repeatNum = numStack.pop();
+                String prev = charStack.pop();
+                StringBuilder sb = new StringBuilder();
+                while(repeatNum > 0) {
+                    sb.append(current);
+                    repeatNum--;
+                }
+                k = 0;
+                current = prev + sb.toString();
+            } else {
+                current += s.charAt(i);
+            }
+        }
+        return current;
+    }
+}
+
+https://leetcode.com/problems/asteroid-collision/
+
+class Solution {
+    public int[] asteroidCollision(int[] asteroids) {
+        int[] output;
+        Stack<Integer> astStack = new Stack<Integer>();
+        //loop through
+        for(int ast: asteroids) {
+            Boolean destroyed = false;
+            // if top is > 0 (right direction) and new item is < 0 and left direction
+            while(!astStack.isEmpty() && astStack.peek() > 0 && ast < 0) {
+                System.out.println("in while true "+ast + " "+astStack.peek());
+                int topVal = astStack.peek();
+                //3 possible scenerios
+                // topVal is < mod of ast
+                // topVal is = mod of ast
+                // topVal is > mod of ast
+                if(topVal < -ast) {
+                    System.out.println("in topVal < -ast " +topVal);
+                    astStack.pop();
+                } else if(topVal == -ast) {
+                    System.out.println("in topVal == -ast " +topVal);
+                    astStack.pop();
+                    destroyed = true;
+                    break;
+                } else { // top value is greater
+                    System.out.println("in topVal > -ast " +topVal);
+                    destroyed = true;
+                    break;
+                }
+            }
+            System.out.println("is destroyed " +destroyed);
+            if(!destroyed) {
+                System.out.println(" going to add "+ ast + " to stack");
+                astStack.push(ast);
+            }
+        }
+        output = new int[astStack.size()];
+        //remember it has to be assigned in reverse order
+        for(int i = output.length - 1; i >= 0; i--) {
+            output[i] = astStack.pop();
+        }
+        return output;
+    }
+}
+
+https://leetcode.com/problems/simplify-path/
+
+class Solution {
+    public String simplifyPath(String path) {
+        String[] parts = path.split("/");
+        Stack<String> stack = new Stack<>();
+        
+        for (String part : parts) {
+            
+            if (part.equals("") || part.equals(".")) {
+                continue;
+            }
+            
+            else if (part.equals("..")) {
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                }
+            }
+            
+            else {
+                stack.push(part);
+            }
+        }
+        
+        StringBuilder result = new StringBuilder();
+        
+        for (String dir : stack) {
+            result.append("/").append(dir);
+        }
+        
+        return result.length() == 0 ? "/" : result.toString();
+    }
+}
+
+https://leetcode.com/problems/evaluate-reverse-polish-notation/
+
+//postfix expression without ()
+class Solution {
+    public int evalRPN(String[] tokens) {
+        Stack<Integer> numbers = new Stack<Integer>();
+        for(String token: tokens) {
+            if(token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/") ) {
+                int value1 = numbers.pop();
+                int value2 = numbers.pop();
+                if(token.equals("+")) {
+                    numbers.push(value1 + value2);
+                } else if(token.equals("-")) {
+                    numbers.push(value2 - value1);
+                } else if(token.equals("*")) {
+                    numbers.push(value1 * value2);
+                } else {
+                    numbers.push(value2 / value1);
+                }
+            } else {
+                numbers.push(Integer.parseInt(token));
+            }
+        }
+        return numbers.pop();
+    }
+}
+
+https://leetcode.com/problems/basic-calculator-ii/description/
+class Solution {
+    public int calculate(String s) {
+        int num = 0;
+        int output = 0;
+        char sign = '+';
+        Stack<Integer> numStack  = new Stack<Integer>();
+        for(int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (Character.isDigit(ch)) {
+                num *= 10;
+                num += (ch - '0'); 
+            }
+            //if its not digit, not empty and if its last letter
+            // make sure sign = ch
+            // num = 0
+            if(!Character.isDigit(ch) && ch != ' ' || i == s.length() -1) {
+                if(sign == '+') {
+                    numStack.push(num);
+                } else if(sign == '-') {
+                    numStack.push(-num);
+                } else if(sign == '*') {
+                    int prevValue = numStack.pop();
+                    numStack.push(prevValue * num);
+                } else if(sign == '/') {
+                    int prevValue = numStack.pop();
+                    numStack.push(prevValue / num);
+                }
+                sign = ch;
+                num = 0;
+            }
+        }
+        for(int stackNum: numStack) {
+            output += stackNum;
+        }
+        return output;
+    }
+}
