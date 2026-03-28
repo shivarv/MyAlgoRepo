@@ -1,0 +1,26 @@
+class StockSpanner {
+    Stack<int[]> decreasingStack;
+    public StockSpanner() {
+        decreasingStack = new Stack<int[]>();
+    }
+    
+    public int next(int price) {
+        if(decreasingStack.isEmpty()) {
+            decreasingStack.push(new int[]{price, 1});
+            return 1;
+        }
+        int num = 1;
+        while(!decreasingStack.isEmpty() && decreasingStack.peek()[0] <= price) {
+            int[] pairs = decreasingStack.pop();
+            num += pairs[1];
+        }
+        decreasingStack.push(new int[]{price, num});
+        return num;
+    }
+}
+
+/**
+ * Your StockSpanner object will be instantiated and called as such:
+ * StockSpanner obj = new StockSpanner();
+ * int param_1 = obj.next(price);
+ */

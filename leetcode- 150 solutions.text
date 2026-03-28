@@ -2176,3 +2176,173 @@ class Solution {
         return output;
     }
 }
+
+https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string-ii/
+
+class Solution {
+    public String removeDuplicates(String s, int k) {
+        Stack<int[]> sStack = new Stack<int[]>();
+        StringBuilder sb = new StringBuilder();
+        for(char ch : s.toCharArray()) {
+            //peek will throw exception if not empty
+            if(!sStack.isEmpty() && ch == sStack.peek()[0]) {
+                sStack.peek()[1]++;
+            } else {
+                sStack.push(new int[]{ch, 1});
+            }
+            if(sStack.peek()[1] == k) {
+                sStack.pop();
+            }
+        }
+        //it cant be handled like a stack, need to visit from start
+        for (int[] pair : sStack) {
+            char ch = (char) pair[0];
+            for(int i = 0 ; i < pair[1]; i++) {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+}
+
+https://leetcode.com/problems/online-stock-span/
+
+//the problem is solved by monotonic stack
+//the real issue understanding the problem and why monotonic stack works here
+class StockSpanner {
+    Stack<int[]> decreasingStack;
+    public StockSpanner() {
+        decreasingStack = new Stack<int[]>();
+    }
+    
+    public int next(int price) {
+        if(decreasingStack.isEmpty()) {
+            decreasingStack.push(new int[]{price, 1});
+            return 1;
+        }
+        int num = 1;
+        while(!decreasingStack.isEmpty() && decreasingStack.peek()[0] <= price) {
+            int[] pairs = decreasingStack.pop();
+            num += pairs[1];
+        }
+        decreasingStack.push(new int[]{price, num});
+        return num;
+    }
+}
+
+/**
+ * Your StockSpanner object will be instantiated and called as such:
+ * StockSpanner obj = new StockSpanner();
+ * int param_1 = obj.next(price);
+ */
+ 
+ https://leetcode.com/problems/exclusive-time-of-functions/
+
+ class Solution {
+    public int[] exclusiveTime(int n, List<String> logs) {
+        int res[] = new int[n];
+        Stack<Integer> executionIndex = new Stack<Integer>();
+        int prevTime = 0;
+        for(String log: logs) {
+            String[] parts = log.split(":");
+            int id = Integer.parseInt(parts[0]);
+            int time = Integer.parseInt(parts[2]);
+            if(parts[1].equals("start")) {
+                if(!executionIndex.isEmpty()) {
+                    res[executionIndex.peek()] += (time - prevTime);
+                }
+                prevTime = time;
+                executionIndex.push(id);
+            } else {
+                res[executionIndex.pop()] += (time - prevTime) + 1;
+                prevTime = time + 1;
+            }
+        }
+        return res;
+    }
+}
+
+https://leetcode.com/problems/maximum-frequency-stack/
+
+class FreqStack {
+    Map<Integer, Integer> freqMap = new HashMap<Integer, Integer>();
+    Map<Integer, Stack<Integer>> groupStack = new HashMap<Integer, Stack<Integer>>();
+    int maxFreq = 0;
+    public FreqStack() {
+        
+    }
+    
+    public void push(int val) {
+        int count = freqMap.getOrDefault(val, 0) +1;
+        freqMap.put(val, count);
+        Stack<Integer> output; 
+        if(groupStack.containsKey(count)) {
+            output = groupStack.get(count);
+        } else {
+            output = new Stack<Integer>();
+        }
+        output.push(val);
+        groupStack.put(count , output);
+        maxFreq = Math.max(maxFreq, count);
+    }
+    
+    public int pop() {
+        int index = maxFreq;
+        int popVal = 0;
+        if(groupStack.get(index).size() == 1) {
+            popVal = groupStack.get(index).pop();
+            groupStack.remove(index);
+            maxFreq--;
+        } else {
+            popVal = groupStack.get(index).pop();
+        }
+        // need to set back the maxFreq
+        if(freqMap.get(popVal) == 1) {
+            freqMap.remove(popVal); 
+        } else {
+            freqMap.put(popVal, freqMap.get(popVal) - 1 );
+        }
+        return popVal;
+    }
+}
+
+/**
+ * Your FreqStack object will be instantiated and called as such:
+ * FreqStack obj = new FreqStack();
+ * obj.push(val);
+ * int param_2 = obj.pop();
+ */
+ 
+ https://leetcode.com/problems/largest-rectangle-in-histogram/
+
+ //need to learn this basics more cleanly
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+         Stack<int[]> stack = new Stack<>();
+        int maxArea = 0;
+
+        for (int i = 0; i < heights.length; i++) {
+            int start = i;
+
+            while (!stack.isEmpty() && stack.peek()[0] > heights[i]) {
+                int[] top = stack.pop();
+                int height = top[0];
+                int index = top[1];
+
+                maxArea = Math.max(maxArea, height * (i - index));
+                start = index; // 
+            }
+
+            stack.push(new int[]{heights[i], start});
+        }
+
+        // process remaining stack
+        int n = heights.length;
+        while (!stack.isEmpty()) {
+            int[] top = stack.pop();
+            maxArea = Math.max(maxArea, top[0] * (n - top[1]));
+        }
+
+        return maxArea;  
+    }
+}
